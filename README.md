@@ -182,7 +182,7 @@ If you’re adding a new provider or feature, please keep:
 
 ### 📄 License
 
-GNU License
+GPL-3.0 license 
 
 ## FAQ
 ### Using Ollama with Docker
