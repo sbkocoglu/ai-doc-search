@@ -1,12 +1,32 @@
-fastapi
-uvicorn
+# Django core
+Django>=4.2
+
+# LangChain core
 langchain
-langchain_openai
-langchain_chroma
+langchain-core
+langchain-community
+
+# Providers
+langchain-openai
+langchain-google-genai
+langchain-ollama
 openai
+
+# Vector DB
 chromadb
-python-multipart
+langchain-chroma
+
+# File ingestion
 PyPDF2
 python-docx
-dotenv
+
+# Embeddings / crypto
+cryptography
+
+# Utilities
+python-dotenv
 pydantic
+whitenoise
+
+# Server
+gunicorn

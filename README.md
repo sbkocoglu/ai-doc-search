@@ -1,162 +1,203 @@
-﻿# AI Document Q&A
+﻿# 🧠 RAG Chatbot (Django + LangChain)
 
-An AI-powered document question-answering app built with **Python, FastAPI, LangChain, OpenAI, and ChromaDB**. Users can upload documents (PDF, DOCX, TXT) and ask questions about their content.
+A **multi-user, streaming AI chatbot** built with **Django, LangChain, and modern LLM providers**, featuring:
 
-**Tech Stack:**
-- **Python 3.11**
-- **FastAPI** (REST API)
-- **LangChain** (retrieval + LLM)
-- **OpenAI** (embeddings & LLM)
-- **ChromaDB** (vector database)
-- **Docker** (optional, for containerization)
+- ChatGPT-style UI with streaming responses
+- Per-user chat history & settings
+- Retrieval-Augmented Generation (RAG)
+- Multi-provider support (OpenAI, Google Gemini, Ollama)
+- Per-user knowledge bases with source attribution
+- No forced re-embedding when switching LLM providers
+- Docker ready
+ 
+---
+
+## ✨ Features
+
+### 💬 Chat
+- Streaming responses (SSE)
+- Stop / Abort generation
+- Persistent chat history
+- Rename & delete chat threads
+- Per-chat context
+
+### 🔌 LLM Providers
+- OpenAI (GPT-4o, GPT-4o-mini, etc.)
+- Google Gemini
+- Ollama (local, offline)
+- Switch providers without breaking existing chats or knowledge
+
+### 📚 Retrieval-Augmented Generation (RAG)
+- Upload documents (PDF, TXT, MD)
+- Per-user knowledge bases
+- Source citations in responses
+- Knowledge persists across provider switches
+- Multiple embedding backends supported internally
+
+### 🧩 Knowledge Management
+- View uploaded documents
+- Delete individual files
+- Clear knowledge base
+- Automatic re-indexing per backend
+
+### 🔐 Authentication & Settings
+- Django auth (multi-user)
+- Per-user API keys (encrypted)
+- Provider-specific configuration
+- CSRF-protected API endpoints
 
 ---
 
-## Features
+## 🏗️ Architecture Overview
 
-- Upload documents (PDF, DOCX, TXT)
-- Automatic text extraction and vector embedding
-- Query documents with natural language
-- Fully containerized with Docker for easy deployment
+**Frontend**
+- Vanilla JS (no framework)
+- ChatGPT-style UI
+- Server-Sent Events (SSE) for streaming
+
+**Backend**
+- Django (session-based auth)
+- LangChain for LLM + RAG
+- ChromaDB for vector storage
+- Per-user, per-backend vector collections
+
+**Key Design Choices**
+- Chat provider and embedding backend are decoupled
+- Knowledge is not re-embedded when switching LLM providers
+- Multiple vector collections prevent embedding dimension conflicts
 
 ---
 
-## Getting Started
+## 🧪 Supported Providers
 
-### **1. Clone the Repository**
+| Provider | Chat | Embeddings | Notes |
+|--------|------|------------|------|
+| OpenAI | ✅ | ✅ | Uses `text-embedding-3-small` |
+| Google | ✅ | ✅ | Uses `text-embedding-004` |
+| Ollama | ✅ | ✅ | Uses `nomic-embed-text` |
+
+> Embedding models are **fixed in the backend** for simplicity and cost safety.
+
+---
+
+## Run with Docker (fastest)
 
 ```bash
-git clone https://github.com/sbkocoglu/ai-doc-search.git
+git clone https://github.com/sbkocoglu/ai-doc-search
 cd ai-doc-search
+docker compose up --build
 ```
 
-### **2. Create `.env` file**
-
-Create a `.env` file in the project root:
-
-```
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
-```
-
-> Replace with your OpenAI API key.
-
----
-
-### **3. Install Python Dependencies**
-
+Open http://127.0.0.1:8000/
+(Optional) Create an admin user:
 ```bash
-python -m venv venv
-source venv/bin/activate      # Linux/Mac
-venv\Scripts\activate         # Windows
+docker compose exec web python manage.py createsuperuser
+```
 
+
+## Install from source
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/sbkocoglu/ai-doc-search
+cd YOUR_REPO_NAME
+```
+
+### 2️⃣ Create virtual environment
+```bash
+python -m venv rag-chatbot-env
+source rag-chatbot-env/bin/activate  # Windows: rag-chatbot-env\Scripts\activate
+```
+
+### 3️⃣ Install dependencies
+```bash
 pip install -r requirements.txt
 ```
 
+### 4️⃣ Run migrations
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 5️⃣ Create a superuser
+```bash
+python manage.py createsuperuser
+```
+
+### 6️⃣ Run the server
+```bash
+python manage.py runserver
+```
+Open:
+👉 http://127.0.0.1:8000/
+
 ---
 
-### **4. Run the FastAPI Server**
+### ⚙️ Ollama Setup (Optional)
+
+If you want to use Ollama:
 
 ```bash
-uvicorn app.main:app --reload
+ollama serve
+ollama pull llama3.1
+ollama pull nomic-embed-text
 ```
 
-Server runs at `http://127.0.0.1:8000`.
+Set provider to Ollama in Settings.
 
 ---
+### 🔒 Security Notes
 
-## API Endpoints
+API keys are encrypted at rest
 
-### **Upload a Document**
+API keys are never returned in full via the API
 
-**POST** `/upload`  
+CSRF protection enabled
 
-**Form-data:**  
+Knowledge bases are isolated per user
 
-| Key  | Value                 |
-|------|----------------------|
-| file | Select your document |
+This project is intended for local or trusted deployments.
+Additional hardening is recommended for public hosting.
 
-**Example CMD `curl`:**
+### 🛠️ Roadmap (Planned / Optional)
 
-```cmd
-curl -X POST http://127.0.0.1:8000/upload -F "file=@C:\path\to\your\document.pdf"
-```
+- Chat export (Markdown / JSON)
+- Background indexing jobs
+- Source preview & PDF page jumping
+- User quotas & rate limiting
+- ASGI + WebSocket streaming (optional)
 
-**Response:**
+### 🤝 Contributing
 
-```json
-{
-  "filename": "document.pdf",
-  "status": "indexed"
-}
-```
+Pull requests are welcome.
+If you’re adding a new provider or feature, please keep:
 
----
+- Provider logic isolated
+- No forced re-embedding behavior
+- Backward compatibility for existing users
 
-### **Ask a Question**
+### 📄 License
 
-**POST** `/query`  
+GNU License
 
-**JSON Body:**
+## FAQ
+### Using Ollama with Docker
 
-```json
-{
-  "question": "What is the main topic of the document?"
-}
-```
-
-**Example CMD `curl`:**
-
-```cmd
-curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d "{\"question\":\"What is the main topic of the document?\"}"
-```
-
-**Response:**
-
-```json
-{
-  "question": "What is the main topic of the document?",
-  "answer": "The Ottoman Empire was a powerful empire that..."
-}
-```
-
----
-
-## Optional: Docker Setup
-
-**Build Docker Image:**
-
+If you run this project with Docker and Ollama is installed on your **host machine**,  
+you must use the following base URL in Settings:
 ```bash
-docker build -t ai-doc-search .
+http://host.docker.internal:11434
 ```
 
-**Run Container:**
+**Why?**  
+When running inside Docker, `localhost` refers to the container itself, not your host OS.
 
-```bash
-docker run -p 8000:8000 --env-file .env ai-doc-search
-```
+This works out of the box on:
+- macOS (Docker Desktop)
+- Windows (Docker Desktop)
 
-Optional with `docker-compose`:
-
-```bash
-docker-compose up --build
-```
-
----
-
-## Project Structure
-
-```
-ai-doc-search/
-├─ app/
-│  ├─ main.py       # FastAPI endpoints
-│  └─ qa.py         # Document processing & LangChain
-├─ sample_docs/     # Example documents
-├─ db/              # Chroma vector DB storage
-├─ Dockerfile
-├─ docker-compose.yml
-├─ requirements.txt
-├─ .env             # OpenAI API key
-└─ README.md
-```
-
+On Linux, add the following to `docker-compose.yml`:
+```yaml
+extra_hosts:
+  - "host.docker.internal:host-gateway"
