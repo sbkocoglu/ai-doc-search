@@ -10,10 +10,8 @@ A **multi-user, streaming AI chatbot** built with **Django, LangChain, and moder
 - No forced re-embedding when switching LLM providers
 - Docker ready
 
-![Sample 1](imgs/Sample1.png)
-![Sample 2](imgs/Sample2.png)
-![Sample 3](imgs/Sample3.png)
-![Sample 4](imgs/Sample4.png)
+<img src="imgs/Sample1.png" alt="drawing" width="400"/><img src="imgs/Sample2.png" alt="drawing" width="400"/>
+<img src="imgs/Sample3.png" alt="drawing" width="400"/><img src="imgs/Sample4.png" alt="drawing" width="400"/>
  
 ---
 
