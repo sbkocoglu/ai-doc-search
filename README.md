@@ -103,7 +103,7 @@ docker compose exec web python manage.py createsuperuser
 ### 1️⃣ Clone the repository
 ```bash
 git clone https://github.com/sbkocoglu/ai-doc-search
-cd YOUR_REPO_NAME
+cd ai-doc-search
 ```
 
 ### 2️⃣ Create virtual environment
