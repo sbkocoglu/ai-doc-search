@@ -42,10 +42,6 @@ def list_knowledge_files(request):
     return JsonResponse({"files": items})
 
 def _delete_collection(user_id: int, backend: str):
-    """
-    Delete a single collection (backend) from the user's Chroma persistence dir.
-    This keeps other backends intact.
-    """
     try:
         from chromadb import PersistentClient
         client = PersistentClient(path=user_chroma_dir(user_id))
@@ -54,9 +50,6 @@ def _delete_collection(user_id: int, backend: str):
         pass
 
 def _reindex_backend(request, backend: str):
-    """
-    Rebuild ONLY one backend collection from the user's remaining KnowledgeFiles for that backend.
-    """
     _delete_collection(request.user.id, backend)
 
     embeddings = get_embeddings_for_backend(request.user, backend)

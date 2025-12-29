@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v0.9.1
+### Fixed
+- Active chat title is now properly displayed as the current chat title in the UI
+- The chats list on the left sidebar now updates correctly upon refreshing the page
+- Footer is now sticky at the bottom and chat auto-scrolls to the bottom
+
 ## v0.9.0 - Major Update
 ### Added
 - Multi-user authentication with per-user settings

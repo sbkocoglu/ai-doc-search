@@ -15,7 +15,8 @@
 }
 
 html, body {
-    height: 100%
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -29,6 +30,7 @@ body {
     height: 100%;
     display: grid;
     grid-template-columns: 280px 1fr;
+    overflow: hidden;
 }
 
 .sidebar {
@@ -157,6 +159,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
 }
 
 .topbar {
@@ -180,6 +183,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding-bottom: 50px;
 }
 
 .msg {
@@ -215,6 +219,7 @@ body {
     padding: 12px 16px 16px;
     border-top: 1px solid var(--border);
     background: rgba(0,0,0,.12);
+    position: sticky;
 }
 
 .composer-inner {

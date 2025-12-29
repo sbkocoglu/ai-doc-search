@@ -11,7 +11,6 @@
             .replace(/>/g, "&gt;")
             .replace(/\n/g, "<br>");
     }
-
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -29,7 +28,8 @@
     const promptEl = document.getElementById("prompt");
     const sendBtn = document.getElementById("sendBtn");
     const newChatBtn = document.getElementById("newChatBtn");
-
+    const sidebarTitle = document.getElementById("activeChatTitle");
+    const topbarTitle = document.getElementById("topbarTitle");
     const settingsBtn = document.getElementById("settingsBtn");
     const settingsModal = document.getElementById("settingsModal");
     const settingsCloseBtn = document.getElementById("settingsCloseBtn");
@@ -209,6 +209,9 @@
         if (isStreaming && activeAbortController) activeAbortController.abort();
 
         currentChatId = null;
+        title = "New Conversation";
+        sidebarTitle.textContent = title
+        topbarTitle.textContent = title
         messagesEl.innerHTML = "";
         addMessage("bot", "New chat started. Ask me anything.");
         promptEl.value = "";
@@ -381,6 +384,7 @@
             setSendMode("send");
             promptEl.focus();
         }
+
     });
 
     const uploadBtn = document.getElementById("uploadBtn");
@@ -463,18 +467,18 @@
             row.className = "source-row";
 
             row.innerHTML = `
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
-        <div style="min-width:0;">
-          <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-            ${escHtml(f.name)}
-          </div>
-          <div class="muted" style="font-size:12px;">
-            ${escHtml(f.size_human)} • ${new Date(f.created_at).toLocaleString()}
-          </div>
-        </div>
-        <button class="btn" type="button" data-del="${f.id}" style="padding:8px 10px;">Delete</button>
-      </div>
-    `;
+                          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+                            <div style="min-width:0;">
+                              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                ${escHtml(f.name)}
+                              </div>
+                              <div class="muted" style="font-size:12px;">
+                                ${escHtml(f.size_human)} • ${new Date(f.created_at).toLocaleString()}
+                              </div>
+                            </div>
+                            <button class="btn" type="button" data-del="${f.id}" style="padding:8px 10px;">Delete</button>
+                          </div>
+                        `;
             knowledgeList.appendChild(row);
         }
 
@@ -555,17 +559,17 @@
             item.className = "chat-item" + (String(c.id) === String(currentChatId) ? " active" : "");
 
             item.innerHTML = `
-  <div class="chat-item-row">
-    <div style="min-width:0; flex: 1;">
-      <div class="chat-title">${escapeHtml(c.title || "New chat")}</div>
-      <div class="chat-meta">${new Date(c.updated_at).toLocaleString()}</div>
-    </div>
+                          <div class="chat-item-row">
+                            <div style="min-width:0; flex: 1;">
+                              <div class="chat-title">${escapeHtml(c.title || "New chat")}</div>
+                              <div class="chat-meta">${new Date(c.updated_at).toLocaleString()}</div>
+                            </div>
 
-    <div class="chat-actions">
-      <button class="chat-more" type="button" aria-label="Chat menu">⋯</button>
-    </div>
-  </div>
-`;
+                            <div class="chat-actions">
+                              <button class="chat-more" type="button" aria-label="Chat menu">⋯</button>
+                            </div>
+                          </div>
+                        `;
 
             item.addEventListener("click", async (e) => {
                 if (e.target.closest(".chat-more") || e.target.closest(".chat-menu")) return;
@@ -581,9 +585,9 @@
                 const menu = document.createElement("div");
                 menu.className = "chat-menu";
                 menu.innerHTML = `
-    <button type="button" data-action="rename">Rename</button>
-    <button type="button" class="danger" data-action="delete">Delete</button>
-  `;
+                                <button type="button" data-action="rename">Rename</button>
+                                <button type="button" class="danger" data-action="delete">Delete</button>
+                              `;
                 item.querySelector(".chat-actions").appendChild(menu);
 
                 menu.addEventListener("click", async (ev) => {
@@ -654,6 +658,9 @@
 
         currentChatId = data.chat.id;
 
+        title = data.chat.title || "New Conversation"; 
+        sidebarTitle.textContent = title
+        topbarTitle.textContent = title
         messagesEl.innerHTML = "";
         for (const m of data.messages || []) {
             const role = (m.role === "assistant") ? "bot" : "user";
@@ -670,5 +677,5 @@
 
 
 
-
+    refreshChatList();
 });

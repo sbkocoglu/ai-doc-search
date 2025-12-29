@@ -204,3 +204,4 @@ On Linux, add the following to `docker-compose.yml`:
 ```yaml
 extra_hosts:
   - "host.docker.internal:host-gateway"
+```
